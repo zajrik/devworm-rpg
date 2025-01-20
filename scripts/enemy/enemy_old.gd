@@ -1,4 +1,4 @@
-class_name Enemy extends CharacterBody2D
+class_name EnemyOld extends CharacterBody2D
 
 @onready var animation: AnimatedSprite2D = $Animation
 
@@ -31,7 +31,7 @@ var is_knocked_back := false
 
 var timestep: float = 0.0
 
-enum State {
+enum EnemyStateOld {
     IDLE,
     MOVE,
     ATTACK,
@@ -46,7 +46,7 @@ enum Facing {
     RIGHT,
 }
 
-var state: State = State.IDLE
+var state: EnemyStateOld = EnemyStateOld.IDLE
 var facing: Facing = Facing.FRONT
 
 func _ready() -> void:
@@ -57,7 +57,7 @@ func _physics_process(delta: float) -> void:
     debug_draw()
 
     # Don't chase/attack player if we've entered the DEAD state
-    if state != State.DEAD:
+    if state != EnemyStateOld.DEAD:
         observe_player()
         chase_player()
         attack_player()
@@ -67,7 +67,7 @@ func _physics_process(delta: float) -> void:
         animate_self()
 
      # Acknowledge death (RIP)
-    if state == State.DEAD:
+    if state == EnemyStateOld.DEAD:
         is_dead = true
 
 
@@ -101,7 +101,7 @@ func debug_draw() -> void:
 
 ## Cast vision ray towards player if player is within range (player_visible).
 func observe_player() -> void:
-    if state == State.DEAD: return
+    if state == EnemyStateOld.DEAD: return
     if is_dead: return
 
     if player_visible:
@@ -118,13 +118,13 @@ func observe_player() -> void:
 
 ## Chase player (if they have been seen).
 func chase_player() -> void:
-    if state == State.DEAD: return
+    if state == EnemyStateOld.DEAD: return
 
     if not is_knocked_back and not player_chase: return
 
     # Chase player!
     if player_direction.length() > 15:
-        state = State.MOVE if state != State.ATTACK else State.ATTACK
+        state = EnemyStateOld.MOVE if state != EnemyStateOld.ATTACK else EnemyStateOld.ATTACK
 
         set_velocity(player_direction.normalized() * 15.0)
 
@@ -132,8 +132,8 @@ func chase_player() -> void:
     else:
         player_chase = false
 
-        if state != State.ATTACK:
-            state = State.IDLE
+        if state != EnemyStateOld.ATTACK:
+            state = EnemyStateOld.IDLE
 
         set_velocity(Vector2.ZERO)
 
@@ -153,7 +153,7 @@ func animate_self() -> void:
             facing = Facing.LEFT
 
     match state:
-        State.IDLE:
+        EnemyStateOld.IDLE:
             match facing:
                 Facing.FRONT: animation.play(&'idle_front')
                 Facing.BACK: animation.play(&'idle_back')
@@ -164,7 +164,7 @@ func animate_self() -> void:
                     animation.flip_h = true
                     animation.play(&'idle_side')
 
-        State.MOVE:
+        EnemyStateOld.MOVE:
             match facing:
                 Facing.FRONT: animation.play(&'move_front')
                 Facing.BACK: animation.play(&'move_back')
@@ -175,7 +175,7 @@ func animate_self() -> void:
                     animation.flip_h = true
                     animation.play(&'move_side')
 
-        State.ATTACK:
+        EnemyStateOld.ATTACK:
             match facing:
                 Facing.FRONT: animation.play(&'attack_front')
                 Facing.BACK: animation.play(&'attack_back')
@@ -186,7 +186,7 @@ func animate_self() -> void:
                     animation.flip_h = true
                     animation.play(&'attack_side')
 
-        State.HURT:
+        EnemyStateOld.HURT:
             match facing:
                 Facing.FRONT: animation.play(&'hurt_front')
                 Facing.BACK: animation.play(&'hurt_back')
@@ -197,7 +197,7 @@ func animate_self() -> void:
                     animation.flip_h = true
                     animation.play(&'hurt_side')
 
-        State.DEAD:
+        EnemyStateOld.DEAD:
             animation.play(&'death')
 
 ## Attack the tracked player
@@ -212,10 +212,10 @@ func attack_player() -> void:
         # Don't attack if we can no longer attack (player moved away)
         if not can_attack: return
 
-        var prev_state: State = state
+        var prev_state: EnemyStateOld = state
 
         attack_cooldown.start(randf_range(2.5, 3.5))
-        state = State.ATTACK
+        state = EnemyStateOld.ATTACK
 
         await get_tree().create_timer(0.4).timeout
 
@@ -229,7 +229,7 @@ func attack(damage: int) -> void:
     health -= damage
 
     if health <= 0:
-        state = State.DEAD
+        state = EnemyStateOld.DEAD
 
 ## Apply knockback to the player from the given origin.
 func apply_knockback(from: Vector2) -> void:
@@ -266,7 +266,7 @@ func _on_detection_area_body_exited(_body: Node2D) -> void:
     if player_chase:
         velocity = Vector2.ZERO
         player_chase = false
-        state = State.IDLE
+        state = EnemyStateOld.IDLE
 
         print('i\'ll get you next time!')
 

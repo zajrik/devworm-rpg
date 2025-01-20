@@ -13,7 +13,7 @@ const move_actions: Array[StringName] = [
     &'move_down',
 ]
 
-enum State {
+enum PlayerState {
     IDLE,
     WALK,
     ATTACK,
@@ -27,7 +27,7 @@ enum Facing {
     FRONT,
 }
 
-var player_state := State.IDLE
+var player_state := PlayerState.IDLE
 var facing_direction := Facing.FRONT
 var knockback_origin := Vector2.ZERO
 
@@ -50,7 +50,7 @@ func _physics_process(_delta: float) -> void:
         animate_self()
 
     # Acknowledge player's death (RIP)
-    if player_state == State.DEAD:
+    if player_state == PlayerState.DEAD:
         is_dead = true
 
     # Not limited to when not is_dead so that corpse can be knocked around for funsies
@@ -83,7 +83,7 @@ func set_facing() -> void:
 ## Play appropriate animation depending on player_state.
 func animate_self() -> void:
     match player_state:
-        State.ATTACK:
+        PlayerState.ATTACK:
             match facing_direction:
                 Facing.FRONT: animation.play(&'attack_front')
                 Facing.BACK: animation.play(&'attack_back')
@@ -94,7 +94,7 @@ func animate_self() -> void:
                     animation.flip_h = true
                     animation.play(&'attack_side')
 
-        State.IDLE:
+        PlayerState.IDLE:
             match facing_direction:
                 Facing.FRONT: animation.play(&'idle_front')
                 Facing.BACK: animation.play(&'idle_back')
@@ -105,7 +105,7 @@ func animate_self() -> void:
                     animation.flip_h = true
                     animation.play(&'idle_side')
 
-        State.WALK:
+        PlayerState.WALK:
             match facing_direction:
                 Facing.FRONT: animation.play(&'walk_front')
                 Facing.BACK: animation.play(&'walk_back')
@@ -116,7 +116,7 @@ func animate_self() -> void:
                     animation.flip_h = true
                     animation.play(&'walk_side')
 
-        State.DEAD:
+        PlayerState.DEAD:
             animation.play(&'death')
 
 ## Attack this player. (To be called by enemies with a reference to the player)
@@ -124,7 +124,7 @@ func attack(damage: int) -> void:
     health -= damage
 
     if health <= 0:
-        player_state = State.DEAD
+        player_state = PlayerState.DEAD
 
 ## Apply knockback to the player from the given origin.
 func apply_knockback(from: Vector2) -> void:
@@ -152,9 +152,9 @@ func player_movement() -> void:
     var direction: Vector2 = Input.get_vector.bindv(move_actions).call()
 
     if direction.length() > 0.0:
-        player_state = State.WALK if player_state != State.ATTACK else State.ATTACK
+        player_state = PlayerState.WALK if player_state != PlayerState.ATTACK else PlayerState.ATTACK
     else:
-        player_state = State.IDLE if player_state != State.ATTACK else State.ATTACK
+        player_state = PlayerState.IDLE if player_state != PlayerState.ATTACK else PlayerState.ATTACK
 
     set_facing()
     set_velocity(direction.normalized() * speed)
@@ -166,7 +166,7 @@ func attack_enemies() -> void:
 
     var prev_state := player_state
 
-    player_state = State.ATTACK
+    player_state = PlayerState.ATTACK
     swing_collider.set_deferred(&'disabled', false)
 
     await get_tree().create_timer(0.5).timeout
@@ -182,5 +182,4 @@ func attack_enemies() -> void:
 func _on_swing_collider_body_entered(body: Node2D) -> void:
     if not is_attacking: return
 
-    (body as Enemy).attack(10)
-    (body as Enemy).apply_knockback(global_position)
+    (body as Enemy).attack(10, global_position)

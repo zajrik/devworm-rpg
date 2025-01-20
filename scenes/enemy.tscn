@@ -1,7 +1,16 @@
-[gd_scene load_steps=71 format=3 uid="uid://cfn2wda76i3hh"]
+[gd_scene load_steps=80 format=3 uid="uid://cfn2wda76i3hh"]
 
 [ext_resource type="Texture2D" uid="uid://roei7ltemnqk" path="res://assets/characters/slime.png" id="1_473id"]
-[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_cxci3"]
+[ext_resource type="Script" path="res://scripts/enemy/enemy.gd" id="1_cxci3"]
+[ext_resource type="Script" path="res://scripts/state/state_machine.gd" id="3_8aoox"]
+[ext_resource type="Script" path="res://scripts/enemy/enemy_state_idle.gd" id="4_f8xe1"]
+[ext_resource type="Script" path="res://scripts/state/state_components/state_component_attackable.gd" id="4_qm3dx"]
+[ext_resource type="Script" path="res://scripts/enemy/enemy_state_chase.gd" id="5_ed063"]
+[ext_resource type="Script" path="res://scripts/enemy/enemy_state_wander.gd" id="5_q5r1w"]
+[ext_resource type="Script" path="res://scripts/enemy/enemy_state_attack.gd" id="6_f34ho"]
+[ext_resource type="Script" path="res://scripts/enemy/enemy_state_combat.gd" id="6_yl0vr"]
+[ext_resource type="Script" path="res://scripts/enemy/enemy_state_hurt.gd" id="7_xvv6a"]
+[ext_resource type="Script" path="res://scripts/enemy/enemy_state_dead.gd" id="8_2ipk7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4t7tu"]
 atlas = ExtResource("1_473id")
@@ -287,7 +296,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ulch6")
 }],
-"loop": true,
+"loop": false,
 "name": &"attack_back",
 "speed": 12.0
 }, {
@@ -313,7 +322,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_sige0")
 }],
-"loop": true,
+"loop": false,
 "name": &"attack_front",
 "speed": 12.0
 }, {
@@ -339,7 +348,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_qxbbn")
 }],
-"loop": true,
+"loop": false,
 "name": &"attack_side",
 "speed": 12.0
 }, {
@@ -373,7 +382,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ep4x5")
 }],
-"loop": true,
+"loop": false,
 "name": &"hurt_back",
 "speed": 6.0
 }, {
@@ -387,7 +396,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fisix")
 }],
-"loop": true,
+"loop": false,
 "name": &"hurt_front",
 "speed": 6.0
 }, {
@@ -401,7 +410,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_pfemc")
 }],
-"loop": true,
+"loop": false,
 "name": &"hurt_side",
 "speed": 6.0
 }, {
@@ -539,10 +548,60 @@ collision_mask = 15
 motion_mode = 1
 script = ExtResource("1_cxci3")
 
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("3_8aoox")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("4_f8xe1")
+
+[node name="AttackableStateComponent" type="Node" parent="StateMachine/Idle"]
+script = ExtResource("4_qm3dx")
+hurt_state = NodePath("../../Hurt")
+dead_state = NodePath("../../Dead")
+
+[node name="Wander" type="Node" parent="StateMachine"]
+script = ExtResource("5_q5r1w")
+
+[node name="AttackableStateComponent" type="Node" parent="StateMachine/Wander"]
+script = ExtResource("4_qm3dx")
+hurt_state = NodePath("../../Hurt")
+dead_state = NodePath("../../Dead")
+
+[node name="Chase" type="Node" parent="StateMachine"]
+script = ExtResource("5_ed063")
+
+[node name="AttackableStateComponent" type="Node" parent="StateMachine/Chase"]
+script = ExtResource("4_qm3dx")
+hurt_state = NodePath("../../Hurt")
+dead_state = NodePath("../../Dead")
+
+[node name="Combat" type="Node" parent="StateMachine"]
+script = ExtResource("6_yl0vr")
+
+[node name="AttackableStateComponent" type="Node" parent="StateMachine/Combat"]
+script = ExtResource("4_qm3dx")
+hurt_state = NodePath("../../Hurt")
+dead_state = NodePath("../../Dead")
+
+[node name="Attack" type="Node" parent="StateMachine"]
+script = ExtResource("6_f34ho")
+
+[node name="AttackableStateComponent" type="Node" parent="StateMachine/Attack"]
+script = ExtResource("4_qm3dx")
+hurt_state = NodePath("../../Hurt")
+dead_state = NodePath("../../Dead")
+
+[node name="Hurt" type="Node" parent="StateMachine"]
+script = ExtResource("7_xvv6a")
+
+[node name="Dead" type="Node" parent="StateMachine"]
+script = ExtResource("8_2ipk7")
+
 [node name="Animation" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, 5)
 sprite_frames = SubResource("SpriteFrames_5wpgu")
-animation = &"idle_front"
+animation = &"attack_back"
 offset = Vector2(0, -5)
 
 [node name="Collider" type="CollisionPolygon2D" parent="."]
@@ -575,6 +634,8 @@ one_shot = true
 
 [node name="AttackCooldown" type="Timer" parent="."]
 one_shot = true
+
+[node name="WanderTimer" type="Timer" parent="."]
 
 [connection signal="body_entered" from="DetectionArea" to="." method="_on_detection_area_body_entered"]
 [connection signal="body_exited" from="DetectionArea" to="." method="_on_detection_area_body_exited"]

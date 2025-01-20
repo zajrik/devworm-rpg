@@ -18,6 +18,7 @@ config/icon="res://assets/icon.svg"
 [autoload]
 
 LayerNames="*res://addons/layerNames/layerNames.gd"
+Enum="*res://scripts/enum.gd"
 
 [display]
 
