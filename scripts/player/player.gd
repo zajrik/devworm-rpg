@@ -78,7 +78,7 @@ func set_facing() -> void:
 
     elif Input.is_action_pressed(&'move_down'):
         facing_direction = Facing.FRONT
-        swing_collider.set_rotation(deg_to_rad(-90))
+        swing_collider.set_rotation(deg_to_rad(90))
 
 ## Play appropriate animation depending on player_state.
 func animate_self() -> void:

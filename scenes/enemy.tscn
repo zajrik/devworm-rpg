@@ -560,7 +560,7 @@ script = ExtResource("4_qm3dx")
 hurt_state = NodePath("Hurt")
 dead_state = NodePath("Dead")
 
-[node name="WanderTimer" type="Timer" parent="StateMachine/Idle"]
+[node name="IdleTimer" type="Timer" parent="StateMachine/Idle"]
 one_shot = true
 
 [node name="Wander" type="Node" parent="StateMachine"]
@@ -571,7 +571,7 @@ script = ExtResource("4_qm3dx")
 hurt_state = NodePath("Hurt")
 dead_state = NodePath("Dead")
 
-[node name="WanderEndTimer" type="Timer" parent="StateMachine/Wander"]
+[node name="WanderTimer" type="Timer" parent="StateMachine/Wander"]
 one_shot = true
 
 [node name="Chase" type="Node" parent="StateMachine"]
@@ -611,13 +611,16 @@ animation = &"attack_back"
 offset = Vector2(0, -5)
 
 [node name="Collider" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(7, 2, 8, 4, 8, 7, 7, 8, -7, 8, -8, 7, -8, 4, -7, 2)
+polygon = PackedVector2Array(7, 2, 7, 4, 7, 7, 7, 8, -7, 8, -7, 7, -7, 4, -7, 2)
 
 [node name="Navigation" type="NavigationAgent2D" parent="."]
 path_desired_distance = 5.0
 target_desired_distance = 5.0
+path_max_distance = 50.0
 path_postprocessing = 1
+simplify_path = true
 avoidance_enabled = true
+radius = 5.0
 debug_enabled = true
 debug_use_custom = true
 debug_path_custom_color = Color(1, 0, 0, 1)
@@ -651,7 +654,7 @@ one_shot = true
 [node name="AttackCooldown" type="Timer" parent="."]
 one_shot = true
 
-[connection signal="timeout" from="StateMachine/Wander/WanderEndTimer" to="StateMachine/Wander" method="_on_wander_end_timer_timeout"]
+[connection signal="timeout" from="StateMachine/Wander/WanderTimer" to="StateMachine/Wander" method="_on_wander_timer_timeout"]
 [connection signal="body_entered" from="DetectionArea" to="." method="_on_detection_area_body_entered"]
 [connection signal="body_exited" from="DetectionArea" to="." method="_on_detection_area_body_exited"]
 [connection signal="body_entered" from="AttackArea" to="." method="_on_attack_area_body_entered"]

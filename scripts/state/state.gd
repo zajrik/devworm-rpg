@@ -6,21 +6,21 @@
 class_name State extends Node
 
 ## Emitted when this state is ready to transition to the next state.
-signal transition(next_state: NodePath, data: Dictionary)
+signal transition(_next_state: NodePath, data: Dictionary)
 
 ## The components composing this state, if any.
 @onready var components: Array[Node] = find_children('*', 'StateComponent')
 
 ## Called by the state machine when receiving unhandled input events.
-func handle_input(event: InputEvent) -> void:
+func handle_input(_event: InputEvent) -> void:
     pass
 
 ## Called by the state machine during _process()
-func process(delta: float) -> void:
+func process(_delta: float) -> void:
     pass
 
 ## Called by the state machine during _physics_process()
-func physics_process(delta: float) -> void:
+func physics_process(_delta: float) -> void:
     pass
 
 ## Called by the state machine upon entering this state.

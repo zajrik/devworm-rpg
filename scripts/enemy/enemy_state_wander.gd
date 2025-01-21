@@ -3,7 +3,7 @@ extends EnemyState
 signal wander_destination_reached
 signal wander_aborted
 
-@onready var wander_end_timer: Timer = $WanderEndTimer
+@onready var wander_timer: Timer = $WanderTimer
 
 var wander_destination := Vector2.ZERO
 var spawn_position := Vector2.ZERO
@@ -21,13 +21,13 @@ func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
     _choose_wander_destination()
     _animate()
 
-    wander_end_timer.start(randf_range(3, 5))
+    wander_timer.start(randf_range(3, 5))
     wander_destination_reached.connect(func(): transition.emit(previous_state))
 
 func exit() -> void:
     super()
 
-    wander_end_timer.stop()
+    wander_timer.stop()
     enemy.navigation.velocity_computed.disconnect(_on_velocity_computed)
 
     for connection: Dictionary in wander_destination_reached.get_connections():
@@ -68,5 +68,5 @@ func _navigate() -> void:
 func _on_velocity_computed(safe_velocity: Vector2) -> void:
     enemy.set_velocity(safe_velocity)
 
-func _on_wander_end_timer_timeout() -> void:
+func _on_wander_timer_timeout() -> void:
     wander_destination_reached.emit()

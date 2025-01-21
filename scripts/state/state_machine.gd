@@ -25,11 +25,9 @@ func _ready() -> void:
     state = initial_state
     state_path = state.name as String
 
-    # Initialize all child states
-    for state_node: State in find_children('*', 'State'):
-        state_node.transition.connect(_transition_state)
-
     await owner.ready
+
+    _activate(state)
     state.enter(^'')
 
 ## Forward unhandled input to state.
@@ -47,6 +45,27 @@ func _physics_process(delta: float) -> void:
     if Engine.is_editor_hint(): return
     state.physics_process(delta)
 
+## Activate the given state, allowing it to transition to other states.
+func _activate(target_state: State) -> void:
+    target_state.transition.connect(_transition_state)
+
+## Deactivate the given state, preventing it from transitioning to other states.
+##
+## Note: This helps prevent non-deterministic state changes. They are still
+## possible, however, under the following circumstances:
+##
+## - State A queues transition to state B.
+## - State A transitions to state C before queued transition to B occurs.
+## - State C transitions back to state A before queued transition occurs.
+## - Queued transition to state B occurs but is non-deterministic because it
+##   it wasn't triggered by this most recent occurance of being in state A.
+##
+## The moral of the story is: Avoid queueing state transitions if you can't
+## guarantee the state won't transition in some other way before the queued
+## transition occurs.
+func _deactivate(target_state: State) -> void:
+    target_state.transition.disconnect(_transition_state)
+
 ## Transition to the given target state. To be called via the state's `transition` signal.
 func _transition_state(target_state: NodePath, data: Dictionary = {}) -> void:
     if not has_node(target_state):
@@ -56,8 +75,12 @@ func _transition_state(target_state: NodePath, data: Dictionary = {}) -> void:
     var previous_state: NodePath = state_path
     state_path = target_state
 
+    _deactivate(state)
     state.exit()
+
     state = get_node(target_state)
+
+    _activate(state)
     state.enter(previous_state, data)
 
 ## Whether or not the current state is the given node.

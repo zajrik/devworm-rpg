@@ -7,9 +7,9 @@ func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
 
     await enemy.animation.animation_finished
 
-    # Return to previous state and cancel knockback if active
+    # Return to idle state and cancel knockback if active
     enemy.is_knocked_back = false
-    transition.emit(previous_state)
+    transition.emit(IDLE)
 
 func exit() -> void:
     super()

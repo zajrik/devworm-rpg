@@ -5,7 +5,7 @@ var timestep: float = 0.0
 func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
     super(previous_state, data)
 
-    enemy.set_collision_mask_value(LayerNames.PHYSICS_2D.PLAYER, false)
+    enemy.collider.call_deferred('set_disabled', true)
     enemy.set_velocity(Vector2.ZERO)
 
     _animate()

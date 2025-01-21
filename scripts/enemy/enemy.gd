@@ -10,6 +10,7 @@ class_name Enemy extends CharacterBody2D
 @onready var attack_cooldown: Timer = $AttackCooldown
 
 @onready var navigation: NavigationAgent2D = $Navigation
+@onready var collider: CollisionPolygon2D = $Collider
 
 @export var speed: float = 15.0
 @export var health: int = 25
