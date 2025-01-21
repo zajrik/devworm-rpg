@@ -540,7 +540,7 @@ radius = 150.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vawr6"]
 
-[node name="Enemy" type="CharacterBody2D"]
+[node name="Enemy" type="CharacterBody2D" groups=["enemies"]]
 y_sort_enabled = true
 position = Vector2(0, -5)
 collision_layer = 8
@@ -555,42 +555,48 @@ initial_state = NodePath("Idle")
 [node name="Idle" type="Node" parent="StateMachine"]
 script = ExtResource("4_f8xe1")
 
-[node name="AttackableStateComponent" type="Node" parent="StateMachine/Idle"]
+[node name="AttackableComponent" type="Node" parent="StateMachine/Idle"]
 script = ExtResource("4_qm3dx")
-hurt_state = NodePath("../../Hurt")
-dead_state = NodePath("../../Dead")
+hurt_state = NodePath("Hurt")
+dead_state = NodePath("Dead")
+
+[node name="WanderTimer" type="Timer" parent="StateMachine/Idle"]
+one_shot = true
 
 [node name="Wander" type="Node" parent="StateMachine"]
 script = ExtResource("5_q5r1w")
 
-[node name="AttackableStateComponent" type="Node" parent="StateMachine/Wander"]
+[node name="AttackableComponent" type="Node" parent="StateMachine/Wander"]
 script = ExtResource("4_qm3dx")
-hurt_state = NodePath("../../Hurt")
-dead_state = NodePath("../../Dead")
+hurt_state = NodePath("Hurt")
+dead_state = NodePath("Dead")
+
+[node name="WanderEndTimer" type="Timer" parent="StateMachine/Wander"]
+one_shot = true
 
 [node name="Chase" type="Node" parent="StateMachine"]
 script = ExtResource("5_ed063")
 
-[node name="AttackableStateComponent" type="Node" parent="StateMachine/Chase"]
+[node name="AttackableComponent" type="Node" parent="StateMachine/Chase"]
 script = ExtResource("4_qm3dx")
-hurt_state = NodePath("../../Hurt")
-dead_state = NodePath("../../Dead")
+hurt_state = NodePath("Hurt")
+dead_state = NodePath("Dead")
 
 [node name="Combat" type="Node" parent="StateMachine"]
 script = ExtResource("6_yl0vr")
 
-[node name="AttackableStateComponent" type="Node" parent="StateMachine/Combat"]
+[node name="AttackableComponent" type="Node" parent="StateMachine/Combat"]
 script = ExtResource("4_qm3dx")
-hurt_state = NodePath("../../Hurt")
-dead_state = NodePath("../../Dead")
+hurt_state = NodePath("Hurt")
+dead_state = NodePath("Dead")
 
 [node name="Attack" type="Node" parent="StateMachine"]
 script = ExtResource("6_f34ho")
 
-[node name="AttackableStateComponent" type="Node" parent="StateMachine/Attack"]
+[node name="AttackableComponent" type="Node" parent="StateMachine/Attack"]
 script = ExtResource("4_qm3dx")
-hurt_state = NodePath("../../Hurt")
-dead_state = NodePath("../../Dead")
+hurt_state = NodePath("Hurt")
+dead_state = NodePath("Dead")
 
 [node name="Hurt" type="Node" parent="StateMachine"]
 script = ExtResource("7_xvv6a")
@@ -606,6 +612,16 @@ offset = Vector2(0, -5)
 
 [node name="Collider" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(7, 2, 8, 4, 8, 7, 7, 8, -7, 8, -8, 7, -8, 4, -7, 2)
+
+[node name="Navigation" type="NavigationAgent2D" parent="."]
+path_desired_distance = 5.0
+target_desired_distance = 5.0
+path_postprocessing = 1
+avoidance_enabled = true
+debug_enabled = true
+debug_use_custom = true
+debug_path_custom_color = Color(1, 0, 0, 1)
+debug_path_custom_point_size = 1.0
 
 [node name="DetectionArea" type="Area2D" parent="."]
 position = Vector2(0, 5)
@@ -635,8 +651,7 @@ one_shot = true
 [node name="AttackCooldown" type="Timer" parent="."]
 one_shot = true
 
-[node name="WanderTimer" type="Timer" parent="."]
-
+[connection signal="timeout" from="StateMachine/Wander/WanderEndTimer" to="StateMachine/Wander" method="_on_wander_end_timer_timeout"]
 [connection signal="body_entered" from="DetectionArea" to="." method="_on_detection_area_body_entered"]
 [connection signal="body_exited" from="DetectionArea" to="." method="_on_detection_area_body_exited"]
 [connection signal="body_entered" from="AttackArea" to="." method="_on_attack_area_body_entered"]

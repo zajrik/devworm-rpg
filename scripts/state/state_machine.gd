@@ -1,10 +1,11 @@
 @tool
 
+## A node to assist with managing state for an entity.
 class_name StateMachine extends Node
 
 @export var initial_state: State:
-    set(state):
-        initial_state = state
+    set(new_state):
+        initial_state = new_state
         update_configuration_warnings()
 
 var state: State = null
@@ -26,7 +27,7 @@ func _ready() -> void:
 
     # Initialize all child states
     for state_node: State in find_children('*', 'State'):
-        state_node.finished.connect(_transition_state)
+        state_node.transition.connect(_transition_state)
 
     await owner.ready
     state.enter(^'')
@@ -46,7 +47,7 @@ func _physics_process(delta: float) -> void:
     if Engine.is_editor_hint(): return
     state.physics_process(delta)
 
-## Transition to the given target state. To be called via the state's `finished` signal.
+## Transition to the given target state. To be called via the state's `transition` signal.
 func _transition_state(target_state: NodePath, data: Dictionary = {}) -> void:
     if not has_node(target_state):
         printerr('%s: State transition target "%s" does not exist.' % [owner.name, target_state])

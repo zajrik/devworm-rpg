@@ -1,16 +1,18 @@
 extends EnemyState
 
-func enter(previous_state: NodePath, _data: Dictionary = {}) -> void:
+func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
+    super(previous_state, data)
+
     _animate()
 
     await enemy.animation.animation_finished
 
     # Return to previous state and cancel knockback if active
     enemy.is_knocked_back = false
-    finished.emit(previous_state)
+    transition.emit(previous_state)
 
 func exit() -> void:
-    pass
+    super()
 
 func physics_process(delta: float) -> void:
     enemy.handle_movement()

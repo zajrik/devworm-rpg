@@ -1,14 +1,24 @@
 extends EnemyState
 
+@export var idle_time_min: float = 3.0
+@export var idle_time_max: float = 5.0
+
+@onready var wander_timer: Timer = $WanderTimer
+
 func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
     super(previous_state, data)
 
     enemy.set_velocity(Vector2.ZERO)
 
+    wander_timer.timeout.connect(_on_wander_timer_timeout)
+    wander_timer.start(randf_range(idle_time_min, idle_time_max))
+
     _animate()
 
 func exit() -> void:
     super()
+    wander_timer.timeout.disconnect(_on_wander_timer_timeout)
+    wander_timer.stop()
 
 func physics_process(delta: float) -> void:
     enemy.handle_movement()
@@ -19,3 +29,6 @@ func _animate() -> void:
         Enum.Facing.FRONT: enemy.animation.play(&'idle_front')
         Enum.Facing.BACK: enemy.animation.play(&'idle_back')
         _: enemy.animation.play(&'idle_side')
+
+func _on_wander_timer_timeout() -> void:
+    transition.emit(WANDER)

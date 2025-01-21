@@ -1,12 +1,14 @@
 @tool
 
 ## A component to be applied to StateMachine State nodes to allow composing
-## state behaviors at runtime.
+## state behaviors and transitions at runtime.
 ##
 ## StateComponents have an enter and exit method that will be called automatically
-## when the respective State methods are called as long super() is called.
+## when the respective State methods are called as long as super() is called.
 ##
-## Note: Classes extending StateComponent must also have the @tool annotation
+## The StateComponent enter method will receive the same data Dictionary
+##
+## Note: Nodes extending StateComponent must also have the @tool annotation
 ## to allow editor hints to be shown for configuration warnings.
 class_name StateComponent extends Node
 
@@ -23,7 +25,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 
     return []
 
-func enter() -> void:
+func enter(_data: Dictionary) -> void:
     pass
 
 func exit() -> void:

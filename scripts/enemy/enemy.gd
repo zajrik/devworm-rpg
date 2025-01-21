@@ -9,6 +9,8 @@ class_name Enemy extends CharacterBody2D
 @onready var attack_delay: Timer = $AttackDelay
 @onready var attack_cooldown: Timer = $AttackCooldown
 
+@onready var navigation: NavigationAgent2D = $Navigation
+
 @export var speed: float = 15.0
 @export var health: int = 25
 
@@ -50,8 +52,6 @@ func _process(delta: float) -> void:
 ## Set the direction the enemy is facing based on velocity angle.
 ## Facing will not be updated if velocity length is zero.
 func face_velocity() -> void:
-    if velocity.length() == 0: return
-
     var angle: float = rad_to_deg(velocity.angle())
 
     if angle >= -135 and angle <= -45:

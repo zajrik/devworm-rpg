@@ -2,13 +2,16 @@ extends EnemyState
 
 var timestep: float = 0.0
 
-func enter(previous_state: NodePath, _data: Dictionary = {}) -> void:
+func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
+    super(previous_state, data)
+
     enemy.set_collision_mask_value(LayerNames.PHYSICS_2D.PLAYER, false)
+    enemy.set_velocity(Vector2.ZERO)
+
     _animate()
 
-
 func exit() -> void:
-    pass
+    super()
 
 func physics_process(delta: float) -> void:
     enemy.set_modulate(lerp(

@@ -33,6 +33,10 @@ project/assembly_name="devworm-rpg"
 
 enabled=PackedStringArray("res://addons/globalize-plugins/plugin.cfg", "res://addons/indent_guidelines/plugin.cfg", "res://addons/layerNames/plugin.cfg", "res://addons/script-ide/plugin.cfg")
 
+[global_group]
+
+enemies=""
+
 [input]
 
 move_up={
