@@ -1,5 +1,8 @@
 @tool
 
+## StateComponent node that allows an entity to be attacked while in the state
+## the component node is attached to.
+##
 ## Owner is expected to have hit and kill signals.
 class_name AttackableStateComponent extends StateComponent
 

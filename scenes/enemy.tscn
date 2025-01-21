@@ -1,12 +1,13 @@
-[gd_scene load_steps=80 format=3 uid="uid://cfn2wda76i3hh"]
+[gd_scene load_steps=81 format=3 uid="uid://cfn2wda76i3hh"]
 
 [ext_resource type="Texture2D" uid="uid://roei7ltemnqk" path="res://assets/characters/slime.png" id="1_473id"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy.gd" id="1_cxci3"]
 [ext_resource type="Script" path="res://scripts/state/state_machine.gd" id="3_8aoox"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_idle.gd" id="4_f8xe1"]
-[ext_resource type="Script" path="res://scripts/state/state_components/state_component_attackable.gd" id="4_qm3dx"]
+[ext_resource type="Script" path="res://scripts/state/state_components/attackable.gd" id="4_qm3dx"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_chase.gd" id="5_ed063"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_wander.gd" id="5_q5r1w"]
+[ext_resource type="Script" path="res://scripts/state/state_components/vision.gd" id="5_vodtp"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_attack.gd" id="6_f34ho"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_combat.gd" id="6_yl0vr"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_hurt.gd" id="7_xvv6a"]
@@ -560,6 +561,13 @@ script = ExtResource("4_f8xe1")
 script = ExtResource("4_qm3dx")
 hurt_state = NodePath("../../Hurt")
 dead_state = NodePath("../../Dead")
+
+[node name="VisionComponent" type="Node" parent="StateMachine/Idle"]
+script = ExtResource("5_vodtp")
+chase_state = NodePath("../../Chase")
+idle_state = NodePath("..")
+detection_range = null
+vision_range = null
 
 [node name="IdleTimer" type="Timer" parent="StateMachine/Idle"]
 one_shot = true
