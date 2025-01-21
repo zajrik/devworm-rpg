@@ -546,6 +546,7 @@ position = Vector2(0, -5)
 collision_layer = 8
 collision_mask = 15
 motion_mode = 1
+wall_min_slide_angle = 0.0
 script = ExtResource("1_cxci3")
 
 [node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
@@ -557,8 +558,8 @@ script = ExtResource("4_f8xe1")
 
 [node name="AttackableComponent" type="Node" parent="StateMachine/Idle"]
 script = ExtResource("4_qm3dx")
-hurt_state = NodePath("Hurt")
-dead_state = NodePath("Dead")
+hurt_state = NodePath("../../Hurt")
+dead_state = NodePath("../../Dead")
 
 [node name="IdleTimer" type="Timer" parent="StateMachine/Idle"]
 one_shot = true
@@ -568,8 +569,8 @@ script = ExtResource("5_q5r1w")
 
 [node name="AttackableComponent" type="Node" parent="StateMachine/Wander"]
 script = ExtResource("4_qm3dx")
-hurt_state = NodePath("Hurt")
-dead_state = NodePath("Dead")
+hurt_state = NodePath("../../Hurt")
+dead_state = NodePath("../../Dead")
 
 [node name="WanderTimer" type="Timer" parent="StateMachine/Wander"]
 one_shot = true
@@ -579,24 +580,24 @@ script = ExtResource("5_ed063")
 
 [node name="AttackableComponent" type="Node" parent="StateMachine/Chase"]
 script = ExtResource("4_qm3dx")
-hurt_state = NodePath("Hurt")
-dead_state = NodePath("Dead")
+hurt_state = NodePath("../../Hurt")
+dead_state = NodePath("../../Dead")
 
 [node name="Combat" type="Node" parent="StateMachine"]
 script = ExtResource("6_yl0vr")
 
 [node name="AttackableComponent" type="Node" parent="StateMachine/Combat"]
 script = ExtResource("4_qm3dx")
-hurt_state = NodePath("Hurt")
-dead_state = NodePath("Dead")
+hurt_state = NodePath("../../Hurt")
+dead_state = NodePath("../../Dead")
 
 [node name="Attack" type="Node" parent="StateMachine"]
 script = ExtResource("6_f34ho")
 
 [node name="AttackableComponent" type="Node" parent="StateMachine/Attack"]
 script = ExtResource("4_qm3dx")
-hurt_state = NodePath("Hurt")
-dead_state = NodePath("Dead")
+hurt_state = NodePath("../../Hurt")
+dead_state = NodePath("../../Dead")
 
 [node name="Hurt" type="Node" parent="StateMachine"]
 script = ExtResource("7_xvv6a")
@@ -618,10 +619,8 @@ path_desired_distance = 5.0
 target_desired_distance = 5.0
 path_max_distance = 50.0
 path_postprocessing = 1
-simplify_path = true
 avoidance_enabled = true
-radius = 5.0
-debug_enabled = true
+radius = 4.0
 debug_use_custom = true
 debug_path_custom_color = Color(1, 0, 0, 1)
 debug_path_custom_point_size = 1.0

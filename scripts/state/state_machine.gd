@@ -18,6 +18,7 @@ func _get_configuration_warnings() -> PackedStringArray:
     return []
 
 func _ready() -> void:
+    if Engine.is_editor_hint(): return
     if initial_state == null:
         printerr('%s: Initial state has not been set.' % owner.name)
         return
@@ -68,6 +69,11 @@ func _deactivate(target_state: State) -> void:
 
 ## Transition to the given target state. To be called via the state's `transition` signal.
 func _transition_state(target_state: NodePath, data: Dictionary = {}) -> void:
+    # NodePaths configured via the inspector are likely relative paths from which
+    # we just need the Node name off the end
+    if target_state.get_name_count() > 1:
+        target_state = target_state.slice(-1)
+
     if not has_node(target_state):
         printerr('%s: State transition target "%s" does not exist.' % [owner.name, target_state])
         return

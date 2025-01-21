@@ -58,7 +58,7 @@ func _navigate() -> void:
     var direction: Vector2 = enemy.global_position.direction_to(next_path_position)
 
     if enemy.navigation.avoidance_enabled:
-        enemy.set_velocity(direction * enemy.speed)
+        enemy.navigation.set_velocity(direction * enemy.speed)
         enemy.face_velocity()
         _animate()
 
@@ -67,6 +67,8 @@ func _navigate() -> void:
 
 func _on_velocity_computed(safe_velocity: Vector2) -> void:
     enemy.set_velocity(safe_velocity)
+    enemy.face_velocity()
+    _animate()
 
 func _on_wander_timer_timeout() -> void:
     wander_destination_reached.emit()

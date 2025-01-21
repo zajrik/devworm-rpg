@@ -4,14 +4,10 @@
 class_name AttackableStateComponent extends StateComponent
 
 ## The associated Hurt State node that will be transitioned to when hit.
-@export_node_path(&'State') var hurt_state: NodePath:
-    set(state):
-        hurt_state = state.slice(-1) as NodePath
+@export_node_path(&'State') var hurt_state: NodePath
 
 ## The associated Dead State node that will be transitioned to when killed.
-@export_node_path(&'State') var dead_state: NodePath:
-    set(state):
-        dead_state = state.slice(-1) as NodePath
+@export_node_path(&'State') var dead_state: NodePath
 
 func enter(_data: Dictionary) -> void:
     owner.hit.connect(_on_hit)
