@@ -12,7 +12,8 @@ class_name AttackableStateComponent extends StateComponent
 ## The associated Dead State node that will be transitioned to when killed.
 @export_node_path(&'State') var dead_state: NodePath
 
-func enter(_data: Dictionary) -> void:
+@warning_ignore('unused_parameter')
+func enter(previous_state: NodePath, data: Dictionary) -> void:
     owner.hit.connect(_on_hit)
     owner.kill.connect(_on_kill)
 

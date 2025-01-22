@@ -1,8 +1,6 @@
 extends EnemyState
 
 func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
-    super(previous_state, data)
-
     _animate()
 
     await enemy.animation.animation_finished
@@ -12,7 +10,7 @@ func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
     transition.emit(IDLE)
 
 func exit() -> void:
-    super()
+    pass
 
 func physics_process(delta: float) -> void:
     enemy.handle_movement()

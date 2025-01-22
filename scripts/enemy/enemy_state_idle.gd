@@ -5,9 +5,7 @@ extends EnemyState
 
 @onready var idle_timer: Timer = $IdleTimer
 
-func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
-    super(previous_state, data)
-
+func enter(_previous_state: NodePath, _data: Dictionary = {}) -> void:
     enemy.set_velocity(Vector2.ZERO)
 
     idle_timer.timeout.connect(_on_wander_timer_timeout)
@@ -16,12 +14,11 @@ func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
     _animate()
 
 func exit() -> void:
-    super()
     idle_timer.timeout.disconnect(_on_wander_timer_timeout)
     idle_timer.stop()
 
 
-func physics_process(delta: float) -> void:
+func physics_process(_delta: float) -> void:
     enemy.handle_movement()
 
 func _animate() -> void:

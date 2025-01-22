@@ -25,7 +25,15 @@ func _get_configuration_warnings() -> PackedStringArray:
 
     return []
 
-func enter(_data: Dictionary) -> void:
+func _ready() -> void:
+    if Engine.is_editor_hint(): return
+
+    # Connect to parent state enter and exit signals
+    state.entered.connect(enter)
+    state.exited.connect(exit)
+
+@warning_ignore('unused_parameter')
+func enter(previous_state: NodePath, data: Dictionary) -> void:
     pass
 
 func exit() -> void:

@@ -1,3 +1,6 @@
+## Represents a state an Enemy can be in.
+##
+## Be sure to call super() if overriding _ready().
 class_name EnemyState extends State
 
 const IDLE: NodePath = ^'Idle'

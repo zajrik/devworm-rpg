@@ -30,6 +30,7 @@ func _ready() -> void:
 
     _activate(state)
     state.enter(^'')
+    state.entered.emit(^'', {})
 
 ## Forward unhandled input to state.
 func _unhandled_input(event: InputEvent) -> void:
@@ -83,11 +84,13 @@ func _transition_state(target_state: NodePath, data: Dictionary = {}) -> void:
 
     _deactivate(state)
     state.exit()
+    state.exited.emit()
 
     state = get_node(target_state)
 
     _activate(state)
     state.enter(previous_state, data)
+    state.entered.emit(previous_state, data)
 
 ## Whether or not the current state is the given node.
 func is_in_state(in_state: NodePath) -> bool:

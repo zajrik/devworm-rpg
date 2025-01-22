@@ -1,4 +1,4 @@
-[gd_resource type="TileSet" load_steps=11 format=3 uid="uid://vt8ep3lm3hh2"]
+[gd_resource type="TileSet" load_steps=12 format=3 uid="uid://vt8ep3lm3hh2"]
 
 [ext_resource type="Texture2D" uid="uid://vbbwbglbcoej" path="res://assets/tilesets/plains.png" id="1_qyrpc"]
 [ext_resource type="Texture2D" uid="uid://b1h1c0aeothju" path="res://assets/tilesets/grass.png" id="2_t7qlc"]
@@ -54,10 +54,17 @@ texture = ExtResource("1_qyrpc")
 2:0/0 = 0
 4:0/0 = 0
 
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_68hrm"]
+vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
+agent_radius = 0.0
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bsb7h"]
 resource_name = "grass"
 texture = ExtResource("2_t7qlc")
 0:0/0 = 0
+0:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_68hrm")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_uf5er"]
 resource_name = "objects"
@@ -129,6 +136,7 @@ texture = ExtResource("5_q8l6s")
 [resource]
 physics_layer_0/collision_layer = 1
 physics_layer_0/collision_mask = 0
+navigation_layer_0/layers = 1
 sources/0 = SubResource("TileSetAtlasSource_uq1p4")
 sources/1 = SubResource("TileSetAtlasSource_bsb7h")
 sources/2 = SubResource("TileSetAtlasSource_xeq8m")

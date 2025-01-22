@@ -19,7 +19,8 @@ class_name VisionStateComponent extends StateComponent
 @export var detection_range: int
 @export var vision_range: int
 
-func enter(_data: Dictionary) -> void:
+@warning_ignore('unused_parameter')
+func enter(previous_state: NodePath, data: Dictionary) -> void:
     pass
 
 func exit() -> void:

@@ -566,8 +566,6 @@ dead_state = NodePath("../../Dead")
 script = ExtResource("5_vodtp")
 chase_state = NodePath("../../Chase")
 idle_state = NodePath("..")
-detection_range = null
-vision_range = null
 
 [node name="IdleTimer" type="Timer" parent="StateMachine/Idle"]
 one_shot = true
@@ -626,14 +624,15 @@ polygon = PackedVector2Array(7, 2, 7, 4, 7, 7, 7, 8, -7, 8, -7, 7, -7, 4, -7, 2)
 path_desired_distance = 5.0
 target_desired_distance = 5.0
 path_max_distance = 50.0
-path_postprocessing = 1
 avoidance_enabled = true
 radius = 4.0
+debug_enabled = true
 debug_use_custom = true
 debug_path_custom_color = Color(1, 0, 0, 1)
 debug_path_custom_point_size = 1.0
 
 [node name="DetectionArea" type="Area2D" parent="."]
+visible = false
 position = Vector2(0, 5)
 collision_layer = 8
 collision_mask = 2
@@ -647,6 +646,7 @@ target_position = Vector2(50, 0)
 collision_mask = 3
 
 [node name="AttackArea" type="Area2D" parent="."]
+visible = false
 collision_layer = 8
 collision_mask = 2
 

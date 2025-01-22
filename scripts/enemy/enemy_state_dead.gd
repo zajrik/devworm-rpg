@@ -3,15 +3,13 @@ extends EnemyState
 var timestep: float = 0.0
 
 func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
-    super(previous_state, data)
-
     enemy.collider.call_deferred('set_disabled', true)
     enemy.set_velocity(Vector2.ZERO)
 
     _animate()
 
 func exit() -> void:
-    super()
+    pass
 
 func physics_process(delta: float) -> void:
     enemy.set_modulate(lerp(

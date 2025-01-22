@@ -13,27 +13,23 @@ func _ready() -> void:
     spawn_position = owner.global_position
 
 
-func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
-    super(previous_state, data)
-
+func enter(previous_state: NodePath, _data: Dictionary = {}) -> void:
     enemy.navigation.velocity_computed.connect(_on_velocity_computed)
 
     _choose_wander_destination()
     _animate()
 
-    wander_timer.start(randf_range(3, 5))
+    wander_timer.start(randf_range(6, 10))
     wander_destination_reached.connect(func(): transition.emit(previous_state))
 
 func exit() -> void:
-    super()
-
     wander_timer.stop()
     enemy.navigation.velocity_computed.disconnect(_on_velocity_computed)
 
     for connection: Dictionary in wander_destination_reached.get_connections():
         wander_destination_reached.disconnect(connection['callable'])
 
-func physics_process(delta: float) -> void:
+func physics_process(_delta: float) -> void:
     _navigate()
 
     enemy.handle_movement()
@@ -49,7 +45,7 @@ func _animate() -> void:
         _: enemy.animation.play(&'move_side')
 
 func _choose_wander_destination() -> void:
-    wander_destination = spawn_position + (Vector2.UP.rotated(deg_to_rad(randi_range(0, 360))) * randi_range(20, 40))
+    wander_destination = spawn_position + (Vector2.UP.rotated(deg_to_rad(randi_range(0, 360))) * randi_range(40, 80))
 
     enemy.navigation.set_target_position(wander_destination)
 

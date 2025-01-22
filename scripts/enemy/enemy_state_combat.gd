@@ -1,12 +1,10 @@
 extends EnemyState
 
 func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
-    super(previous_state, data)
-
     _animate()
 
 func exit() -> void:
-    super()
+    pass
 
 func physics_process(delta: float) -> void:
     enemy.handle_movement()
