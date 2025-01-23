@@ -5,13 +5,14 @@
 [ext_resource type="Script" path="res://scripts/state/state_machine.gd" id="3_8aoox"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_idle.gd" id="4_f8xe1"]
 [ext_resource type="Script" path="res://scripts/state/state_components/attackable.gd" id="4_qm3dx"]
+[ext_resource type="Script" path="res://scripts/state/state_components/chase_on_sight.gd" id="5_2fsy1"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_chase.gd" id="5_ed063"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_wander.gd" id="5_q5r1w"]
-[ext_resource type="Script" path="res://scripts/state/state_components/vision.gd" id="5_vodtp"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_attack.gd" id="6_f34ho"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_combat.gd" id="6_yl0vr"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_hurt.gd" id="7_xvv6a"]
 [ext_resource type="Script" path="res://scripts/enemy/enemy_state_dead.gd" id="8_2ipk7"]
+[ext_resource type="Script" path="res://scripts/simple_vision.gd" id="13_j4u4r"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4t7tu"]
 atlas = ExtResource("1_473id")
@@ -536,9 +537,6 @@ animations = [{
 "speed": 10.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_yedtv"]
-radius = 150.0
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_vawr6"]
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemies"]]
@@ -562,10 +560,8 @@ script = ExtResource("4_qm3dx")
 hurt_state = NodePath("../../Hurt")
 dead_state = NodePath("../../Dead")
 
-[node name="VisionComponent" type="Node" parent="StateMachine/Idle"]
-script = ExtResource("5_vodtp")
-chase_state = NodePath("../../Chase")
-idle_state = NodePath("..")
+[node name="ChaseOnSight" type="Node" parent="StateMachine/Idle"]
+script = ExtResource("5_2fsy1")
 
 [node name="IdleTimer" type="Timer" parent="StateMachine/Idle"]
 one_shot = true
@@ -611,6 +607,12 @@ script = ExtResource("7_xvv6a")
 [node name="Dead" type="Node" parent="StateMachine"]
 script = ExtResource("8_2ipk7")
 
+[node name="SimpleVision" type="Area2D" parent="."]
+collision_mask = 0
+monitorable = false
+script = ExtResource("13_j4u4r")
+vision_collision_mask = 11
+
 [node name="Animation" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, 5)
 sprite_frames = SubResource("SpriteFrames_5wpgu")
@@ -618,6 +620,7 @@ animation = &"attack_back"
 offset = Vector2(0, -5)
 
 [node name="Collider" type="CollisionPolygon2D" parent="."]
+visible = false
 polygon = PackedVector2Array(7, 2, 7, 4, 7, 7, 7, 8, -7, 8, -7, 7, -7, 4, -7, 2)
 
 [node name="Navigation" type="NavigationAgent2D" parent="."]
@@ -631,22 +634,7 @@ debug_use_custom = true
 debug_path_custom_color = Color(1, 0, 0, 1)
 debug_path_custom_point_size = 1.0
 
-[node name="DetectionArea" type="Area2D" parent="."]
-visible = false
-position = Vector2(0, 5)
-collision_layer = 8
-collision_mask = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
-position = Vector2(0, 5)
-shape = SubResource("CircleShape2D_yedtv")
-
-[node name="VisionRay" type="RayCast2D" parent="DetectionArea"]
-target_position = Vector2(50, 0)
-collision_mask = 3
-
 [node name="AttackArea" type="Area2D" parent="."]
-visible = false
 collision_layer = 8
 collision_mask = 2
 
@@ -662,8 +650,6 @@ one_shot = true
 one_shot = true
 
 [connection signal="timeout" from="StateMachine/Wander/WanderTimer" to="StateMachine/Wander" method="_on_wander_timer_timeout"]
-[connection signal="body_entered" from="DetectionArea" to="." method="_on_detection_area_body_entered"]
-[connection signal="body_exited" from="DetectionArea" to="." method="_on_detection_area_body_exited"]
 [connection signal="body_entered" from="AttackArea" to="." method="_on_attack_area_body_entered"]
 [connection signal="body_exited" from="AttackArea" to="." method="_on_attack_area_body_exited"]
 [connection signal="mouse_entered" from="AttackArea" to="." method="_on_attack_area_mouse_entered"]

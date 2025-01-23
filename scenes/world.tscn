@@ -41,76 +41,7 @@ navigation_enabled = false
 position = Vector2(265, 166)
 
 [node name="Enemy" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(453, 151)
+position = Vector2(363, 353)
 
 [node name="Enemy2" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(402, 233)
-
-[node name="Enemy3" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(419, 227)
-
-[node name="Enemy4" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(443, 227)
-
-[node name="Enemy5" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(437, 244)
-
-[node name="Enemy6" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(417, 245)
-
-[node name="Enemy7" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(457, 238)
-
-[node name="Enemy8" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(465, 229)
-
-[node name="Enemy9" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(482, 223)
-
-[node name="Enemy10" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(506, 223)
-
-[node name="Enemy11" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(500, 240)
-
-[node name="Enemy12" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(480, 241)
-
-[node name="Enemy13" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(520, 234)
-
-[node name="Enemy14" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(431, 262)
-
-[node name="Enemy15" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(448, 256)
-
-[node name="Enemy16" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(472, 256)
-
-[node name="Enemy17" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(466, 273)
-
-[node name="Enemy18" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(446, 274)
-
-[node name="Enemy19" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(486, 267)
-
-[node name="Enemy20" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(360, 269)
-
-[node name="Enemy21" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(377, 263)
-
-[node name="Enemy22" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(401, 263)
-
-[node name="Enemy23" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(395, 280)
-
-[node name="Enemy24" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(375, 281)
-
-[node name="Enemy25" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(415, 274)
+position = Vector2(291, 349)
