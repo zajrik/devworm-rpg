@@ -1,6 +1,6 @@
 [gd_scene load_steps=55 format=3 uid="uid://d2brj6akjw50a"]
 
-[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_fnqt3"]
+[ext_resource type="Script" uid="uid://bdnnwve76ykhj" path="res://scripts/player/player.gd" id="1_fnqt3"]
 [ext_resource type="Texture2D" uid="uid://753dax0w5en" path="res://assets/characters/player.png" id="2_6151s"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3q2ef"]
@@ -419,6 +419,8 @@ collision_layer = 2
 collision_mask = 13
 motion_mode = 1
 script = ExtResource("1_fnqt3")
+speed = null
+health = null
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_w7sni")
@@ -426,9 +428,11 @@ animation = &"attack_back"
 offset = Vector2(0, -14)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+z_index = 10
 polygon = PackedVector2Array(-5, 3, -4, 4, 5, 4, 6, 3, 6, 1, 4, -1, -3, -1, -5, 1)
 
 [node name="SwingCollider" type="Area2D" parent="."]
+visible = false
 collision_layer = 0
 collision_mask = 8
 monitorable = false

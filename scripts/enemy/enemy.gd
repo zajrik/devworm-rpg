@@ -3,7 +3,8 @@ class_name Enemy extends CharacterBody2D
 @onready var animation: AnimatedSprite2D = $Animation
 @onready var state_machine: StateMachine = $StateMachine
 
-@onready var vision_ray: RayCast2D = $DetectionArea/VisionRay
+@onready var vision: SimpleVision = $Vision
+@onready var name_label: RichTextLabel = $NameLabel
 
 @onready var attack_area: Area2D = $AttackArea
 @onready var attack_delay: Timer = $AttackDelay
@@ -46,6 +47,25 @@ func debug_draw() -> void:
         DebugDraw2D.set_text('enemy state', state_machine.state.name)
         DebugDraw2D.set_text('enemy attackable', state_machine.state_has_component(&'AttackableStateComponent'))
 
+    #name_label.set_text('[center]%s' % name)
+#
+    #for tracked_entity: SimpleVision.TrackedEntity in vision.tracked_entities.values():
+        #var entity: CharacterBody2D = tracked_entity.entity
+        #var entity_name: String
+#
+        #if vision.can_see(entity):
+            #entity_name = '[color=red]%s[/color]' % entity.name
+        #else:
+            #entity_name = entity.name
+            #var collider: Node2D = tracked_entity.vision_ray.get_collider()
+#
+            ## If our vision ray is being blocked by an entity that isn't the target entity
+            #if collider != null:
+                #entity_name += ' [color=green](%s)[/color]' % collider.name
+#
+        #name_label.text += '\n-%s' % entity_name
+#
+    #name_label.text += '[/center]'
 
 func _process(_delta: float) -> void:
     debug_draw()

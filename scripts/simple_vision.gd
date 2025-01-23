@@ -10,33 +10,25 @@ class_name SimpleVision extends Area2D
 
 @export_flags_2d_physics var vision_collision_mask: int = 0
 
+@onready var parent_id: int = get_parent().get_instance_id()
+
 
 ## Emitted when an entity enters the detection radius. This is the point at
 ## which the vision ray will be aimed at the entity.
-signal entity_detected(entity: Node2D)
+signal entity_detected(entity: CharacterBody2D)
 
 ## Emitted when an entity has left the detection radius.
-signal entity_lost(entity: Node2D)
+signal entity_lost(entity: CharacterBody2D)
 
 ## Emitted when the vision ray hits an entity.
-signal entity_sighted(entity: Node2D)
+signal entity_sighted(entity: CharacterBody2D)
 
 ## Emitted when the vision ray no longer hits an entity.
-signal entity_sight_lost(entity: Node2D)
+signal entity_sight_lost(entity: CharacterBody2D)
 
 
-## Dictionary mapping entity RID to the entity Node2D of entities within the
-## configured detection radius.
-var _detected_entities: Dictionary = {}
-
-## Dictionary mapping entity RID to RayCast2D nodes. The existence of a raycast
-## node for an entity indicates that the entity is within the detection radius.
-var _vision_rays: Dictionary = {}
-
-## Dictionary mapping entity RID to whether or not the entity is visible. Rather
-## than the actual boolean value, the existence of a value for the entity RID is
-## enough to determine the entity is visible, so truthy/falsey checks are safe.
-var _visible_entities: Dictionary = {}
+## Dictionary mapping entity instance ids to TrackedEntity objects
+var tracked_entities: Dictionary[int, TrackedEntity] = {}
 
 
 # Clear Area2D configuration warnings about missing collision shape
@@ -45,7 +37,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 
 
 func _ready() -> void:
-    # Set detection area collision mask to detect player
+    # Set detection area collision mask to detect entities
     set_collision_mask(vision_collision_mask)
     set_collision_layer(0)
 
@@ -58,36 +50,27 @@ func _ready() -> void:
     detection_collider_shape.set_radius(detection_radius)
     detection_collider.set_shape(detection_collider_shape)
 
+    detection_collider.set_visible(false)
+
     add_child(detection_collider)
 
 
 func _physics_process(_delta: float) -> void:
     # For every entity detected, aim the vision ray at the entity and check if it
     # hits that entity.
-    for entity_rid in _detected_entities.keys():
-        var entity: Node2D = _detected_entities[entity_rid]
-        var vision_ray: RayCast2D = _vision_rays[entity_rid]
+    for entity_id: int in tracked_entities.keys():
+        var tracked_entity: TrackedEntity = tracked_entities[entity_id]
 
-        vision_ray.look_at(entity.global_position)
+        tracked_entity.look_at()
 
-        var collider: Node2D = vision_ray.get_collider()
+        if tracked_entity.is_visible():
+            if not tracked_entity.was_visible:
+                tracked_entity.was_visible = true
+                entity_sighted.emit(tracked_entity.entity)
 
-        if not collider is CharacterBody2D: return
-
-        var collider_rid: RID = collider.get_rid()
-
-        # If the collider is the detected entity, the entity is visible
-        if collider_rid == entity_rid:
-            if not _visible_entities.has(entity_rid):
-                _visible_entities[entity_rid] = true
-                entity_sighted.emit(entity)
-
-        # If the collider is another entity and the detected entity was visible,
-        # the detected entity is no longer visible.
-        elif _visible_entities.has(entity_rid):
-            _visible_entities.erase(entity_rid)
-            entity_sight_lost.emit(entity)
-
+        elif tracked_entity.was_visible:
+            tracked_entity.was_visible = false
+            entity_sight_lost.emit(tracked_entity.entity)
 
 
 ## To be called when an entity has entered the detection radius.
@@ -95,19 +78,20 @@ func _physics_process(_delta: float) -> void:
 func _on_entity_detected(entity: Node2D) -> void:
     if not entity is CharacterBody2D: return
 
-    var entity_rid: RID = entity.get_rid()
+    var entity_id: int = entity.get_instance_id()
 
-    if entity_rid == get_parent().get_rid(): return
+    if entity_id == parent_id: return
 
-    _detected_entities[entity_rid] = entity
+    var tracked_entity := TrackedEntity.new(
+        entity,
+        vision_ray_length,
+        vision_collision_mask,
+        get_parent()
+    )
 
-    var vision_ray := RayCast2D.new()
+    tracked_entities[entity_id] = tracked_entity
 
-    vision_ray.set_collision_mask(vision_collision_mask)
-    vision_ray.set_target_position(Vector2(vision_ray_length, 0))
-    _vision_rays[entity_rid] = vision_ray
-
-    add_child(vision_ray)
+    add_child(tracked_entity.vision_ray)
 
     entity_detected.emit(entity)
 
@@ -117,25 +101,63 @@ func _on_entity_detected(entity: Node2D) -> void:
 func _on_entity_lost(entity: Node2D) -> void:
     if not entity is CharacterBody2D: return
 
-    var entity_rid: RID = entity.get_rid()
-    var vision_ray: RayCast2D = _vision_rays[entity_rid]
+    var entity_id: int = entity.get_instance_id()
 
-    _detected_entities.erase(entity_rid)
-    _vision_rays.erase(entity_rid)
+    if not tracked_entities.has(entity_id): return
 
-    # Visible entity entry should be erased at this point if the sight of the entity
-    # was lost, but just in case the entity somehow made it out of the detection radius
-    # without breaking the raycast, we'll remove it here for memory safety.
-    _visible_entities.erase(entity_rid)
+    var tracked_entity: TrackedEntity = tracked_entities[entity_id]
+
+    tracked_entities.erase(entity_id)
+    tracked_entity.vision_ray.queue_free()
+    tracked_entity.call_deferred(&'free')
 
     entity_lost.emit(entity)
-    vision_ray.queue_free()
-
 
 ## Whether or not the given entity is detected.
 func can_detect(entity: CharacterBody2D) -> bool:
-    return _detected_entities.has(entity.get_rid())
+    return tracked_entities.has(entity.get_instance_id())
+
 
 ## Whether or not the given entity is visible.
 func can_see(entity: CharacterBody2D) -> bool:
-    return _visible_entities.has(entity.get_rid)
+    if not tracked_entities.has(entity.get_instance_id()):
+        return false
+
+    return tracked_entities[entity.get_instance_id()].is_visible()
+
+
+class TrackedEntity:
+    var entity: CharacterBody2D
+    var vision_ray: RayCast2D
+
+    ## Whether or not this tracked entity was visible last time it was checked.
+    ## To be set by the SimpleVision node.
+    var was_visible: bool = false
+
+    func _init(
+        tracked_entity: CharacterBody2D,
+        vision_ray_length: int,
+        vision_collision_mask: int,
+        parent: Node2D
+    ):
+        entity = tracked_entity
+
+        vision_ray = RayCast2D.new()
+        vision_ray.add_exception(parent)
+        vision_ray.set_collision_mask(vision_collision_mask)
+        vision_ray.set_target_position(Vector2(vision_ray_length, 0))
+
+        look_at()
+
+    ## Make the associated vision ray look at the tracked entity.
+    func look_at() -> void:
+        vision_ray.look_at(entity.global_position)
+
+    ## Returns whether or not the tracked entity is currently visible.
+    func is_visible() -> bool:
+        var collider: Node2D = vision_ray.get_collider()
+
+        if collider == null:
+            return false
+
+        return collider.get_instance_id() == entity.get_instance_id()

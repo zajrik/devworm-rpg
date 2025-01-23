@@ -12,7 +12,7 @@ config_version=5
 
 config/name="devworm-rpg"
 run/main_scene="res://scenes/world.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
+config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://assets/icon.svg"
 
 [autoload]
@@ -23,6 +23,7 @@ Enum="*res://scripts/enum.gd"
 [display]
 
 window/size/mode=2
+window/size/always_on_top=true
 window/stretch/scale=3.0
 
 [dotnet]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=4 uid="uid://irwyae7c6ibb"]
 
 [ext_resource type="PackedScene" uid="uid://d2brj6akjw50a" path="res://scenes/player.tscn" id="1_bxawg"]
-[ext_resource type="Script" path="res://scripts/world.gd" id="1_p5683"]
+[ext_resource type="Script" uid="uid://62f6y7vp016k" path="res://scripts/world.gd" id="1_p5683"]
 [ext_resource type="TileSet" uid="uid://vt8ep3lm3hh2" path="res://resource/terrain_tilemap.tres" id="1_yopxi"]
 [ext_resource type="PackedScene" uid="uid://cfn2wda76i3hh" path="res://scenes/enemy.tscn" id="3_y5cb3"]
 
@@ -19,6 +19,7 @@ y_sort_enabled = true
 script = ExtResource("1_p5683")
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+visible = false
 navigation_polygon = SubResource("NavigationPolygon_i3w44")
 
 [node name="GrassLayer" type="TileMapLayer" parent="." groups=["terrain"]]

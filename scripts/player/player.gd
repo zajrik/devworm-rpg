@@ -180,6 +180,6 @@ func attack_enemies() -> void:
 ## TODO: Write a proper state machine setup for player and enemies and add
 ## immunity time to player and enemies on hit
 func _on_swing_collider_body_entered(body: Node2D) -> void:
-    if not is_attacking: return
+    if not is_attacking or not body is Enemy: return
 
     (body as Enemy).attack(10, global_position)
