@@ -612,11 +612,9 @@ script = ExtResource("8_2ipk7")
 [node name="Vision" type="Area2D" parent="."]
 collision_layer = 0
 collision_mask = 11
-monitorable = false
 script = ExtResource("13_j4u4r")
-detection_radius = 200.0
-vision_ray_length = 100
 vision_collision_mask = 11
+detection_circle_visible = false
 
 [node name="Animation" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_5wpgu")

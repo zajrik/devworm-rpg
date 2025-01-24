@@ -1,16 +1,33 @@
 @tool
 
-## A configurable vision/detection node that sees CharacterBody2D physics entities on
-## the configured physics layers. Uses only a single raycast per entity within the
-## detection radius to attempt to see them.
+## A configurable vision/detection node that sees CharacterBody2D physics entities
+## on the configured physics layers. Uses only a single raycast per entity within
+## the detection radius to attempt to see them.
 class_name SimpleVision extends Area2D
 
-@export var detection_radius: float = 100.0
-@export var vision_ray_length: int = 50
+## The radius of the area in which entities will be detected, in pixels.
+@export_custom(PROPERTY_HINT_NONE, 'suffix:px')
+var detection_radius: float = 100.0
 
-@export_flags_2d_physics var vision_collision_mask: int = 0
+## The length of the vision raycast, in pixels.
+@export_custom(PROPERTY_HINT_NONE, 'suffix:px')
+var vision_ray_length: float = 50.0
 
-@onready var parent_id: int = get_parent().get_instance_id()
+## The collision mask for determining entities to detect.
+@export_flags_2d_physics
+var vision_collision_mask: int = 0
+
+@export_category('Debug')
+## Whether or not the detection radius circle should be drawn when 'Visible
+## Collision Shapes' is active in the debug menu.
+@export var detection_circle_visible: bool = true
+
+## Whether or not vision raycasts for tracked entities should be drawn when
+## 'Visible Collision Shapes' is active in the debug menu.
+@export var vision_ray_visible: bool = true
+
+## The instance id of the parent node of this SimpleVision node.
+@onready var _parent_id: int = get_parent().get_instance_id()
 
 
 ## Emitted when an entity enters the detection radius. This is the point at
@@ -39,7 +56,6 @@ func _get_configuration_warnings() -> PackedStringArray:
 func _ready() -> void:
     # Set detection area collision mask to detect entities
     set_collision_mask(vision_collision_mask)
-    set_collision_layer(0)
 
     body_entered.connect(_on_entity_detected)
     body_exited.connect(_on_entity_lost)
@@ -50,7 +66,7 @@ func _ready() -> void:
     detection_collider_shape.set_radius(detection_radius)
     detection_collider.set_shape(detection_collider_shape)
 
-    detection_collider.set_visible(false)
+    detection_collider.set_visible(detection_circle_visible)
 
     add_child(detection_collider)
 
@@ -80,13 +96,14 @@ func _on_entity_detected(entity: Node2D) -> void:
 
     var entity_id: int = entity.get_instance_id()
 
-    if entity_id == parent_id: return
+    if entity_id == _parent_id: return
 
     var tracked_entity := TrackedEntity.new(
         entity,
         vision_ray_length,
         vision_collision_mask,
-        get_parent()
+        get_parent(),
+        vision_ray_visible
     )
 
     tracked_entities[entity_id] = tracked_entity
@@ -113,6 +130,7 @@ func _on_entity_lost(entity: Node2D) -> void:
 
     entity_lost.emit(entity)
 
+
 ## Whether or not the given entity is detected.
 func can_detect(entity: CharacterBody2D) -> bool:
     return tracked_entities.has(entity.get_instance_id())
@@ -134,24 +152,29 @@ class TrackedEntity:
     ## To be set by the SimpleVision node.
     var was_visible: bool = false
 
+
     func _init(
         tracked_entity: CharacterBody2D,
-        vision_ray_length: int,
+        vision_ray_length: float,
         vision_collision_mask: int,
-        parent: Node2D
+        parent: Node2D,
+        vision_ray_debug_visible: bool,
     ):
         entity = tracked_entity
 
         vision_ray = RayCast2D.new()
         vision_ray.add_exception(parent)
         vision_ray.set_collision_mask(vision_collision_mask)
-        vision_ray.set_target_position(Vector2(vision_ray_length, 0))
+        vision_ray.set_target_position(Vector2(vision_ray_length, 0.0))
+        vision_ray.set_visible(vision_ray_debug_visible)
 
         look_at()
+
 
     ## Make the associated vision ray look at the tracked entity.
     func look_at() -> void:
         vision_ray.look_at(entity.global_position)
+
 
     ## Returns whether or not the tracked entity is currently visible.
     func is_visible() -> bool:
