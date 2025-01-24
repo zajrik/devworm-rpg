@@ -42,7 +42,4 @@ navigation_enabled = false
 position = Vector2(265, 166)
 
 [node name="Enemy" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(363, 353)
-
-[node name="Enemy2" parent="." instance=ExtResource("3_y5cb3")]
-position = Vector2(291, 349)
+position = Vector2(385, 165)

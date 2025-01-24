@@ -8,23 +8,41 @@ class_name ChaseOnSightStateComponent extends StateComponent
         vision = value
         update_configuration_warnings()
 
-func _get_configuration_warnings() -> PackedStringArray:
-    if vision == null:
-        return ['Vision node is not set.']
 
-    return []
+## The chase State to transition to when an entity is sighted.
+@export_node_path(&'State') var chase_state: NodePath:
+    set(value):
+        chase_state = value
+        update_configuration_warnings()
+
+
+func _get_configuration_warnings() -> PackedStringArray:
+    var result := []
+
+    if vision == null:
+        result.append(
+            'A SimpleVision node must be set for the component to see entities.'
+        )
+
+    if chase_state.is_empty():
+        result.append(
+            'A chase State must be set for the component to transition to when an entity is sighted.'
+        )
+
+    return result
+
 
 func enter(_previous_state: NodePath, _data: Dictionary) -> void:
-    if vision == null: return
+    if not _get_configuration_warnings().is_empty(): return
 
     vision.entity_sighted.connect(_on_entity_sighted)
-    vision.entity_sight_lost.connect(_on_entity_sight_lost)
+
 
 func exit() -> void:
-    pass
+    if not _get_configuration_warnings().is_empty(): return
+
+    vision.entity_sighted.disconnect(_on_entity_sighted)
+
 
 func _on_entity_sighted(_entity: CharacterBody2D) -> void:
-    pass
-
-func _on_entity_sight_lost(_entity: CharacterBody2D) -> void:
-    pass
+    state.transition.emit(chase_state, {'target': _entity})

@@ -143,7 +143,8 @@ func can_see(entity: CharacterBody2D) -> bool:
 
     return tracked_entities[entity.get_instance_id()].is_visible()
 
-
+## Holds a reference to an entity tracked by a SimpleVision node, and a vision ray
+## used to detect the entity.
 class TrackedEntity:
     var entity: CharacterBody2D
     var vision_ray: RayCast2D

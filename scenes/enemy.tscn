@@ -1,17 +1,18 @@
-[gd_scene load_steps=82 format=3 uid="uid://cfn2wda76i3hh"]
+[gd_scene load_steps=83 format=3 uid="uid://cfn2wda76i3hh"]
 
 [ext_resource type="Texture2D" uid="uid://roei7ltemnqk" path="res://assets/characters/slime.png" id="1_473id"]
 [ext_resource type="Script" uid="uid://brs1o8iak4hol" path="res://scripts/enemy/enemy.gd" id="1_cxci3"]
 [ext_resource type="Script" uid="uid://dsenbxf0ejc77" path="res://scripts/state/state_machine.gd" id="3_8aoox"]
 [ext_resource type="Script" uid="uid://dtmhd4arq5ni4" path="res://scripts/enemy/enemy_state_idle.gd" id="4_f8xe1"]
 [ext_resource type="Script" uid="uid://4dg4bvv8g5vk" path="res://scripts/state/state_components/attackable.gd" id="4_qm3dx"]
-[ext_resource type="Script" uid="uid://bk3fdy4sr88p3" path="res://scripts/state/state_components/chase_on_sight.gd" id="5_2fsy1"]
 [ext_resource type="Script" uid="uid://dahr4p7he73bm" path="res://scripts/enemy/enemy_state_chase.gd" id="5_ed063"]
 [ext_resource type="Script" uid="uid://cc2oqmxenjchm" path="res://scripts/enemy/enemy_state_wander.gd" id="5_q5r1w"]
+[ext_resource type="Script" uid="uid://bk3fdy4sr88p3" path="res://scripts/state/state_components/chase_on_sight.gd" id="5_wtq4b"]
 [ext_resource type="Script" uid="uid://dnwy3oeoxmj6q" path="res://scripts/enemy/enemy_state_attack.gd" id="6_f34ho"]
 [ext_resource type="Script" uid="uid://cwtedfmpcdpij" path="res://scripts/enemy/enemy_state_combat.gd" id="6_yl0vr"]
 [ext_resource type="Script" uid="uid://dk6h8ot3jbewt" path="res://scripts/enemy/enemy_state_hurt.gd" id="7_xvv6a"]
 [ext_resource type="Script" uid="uid://cndnj5ejhepdo" path="res://scripts/enemy/enemy_state_dead.gd" id="8_2ipk7"]
+[ext_resource type="Script" uid="uid://cdx1x3xf0sudj" path="res://scripts/state/state.gd" id="12_j0cyh"]
 [ext_resource type="Script" uid="uid://cwu0bh7scaka1" path="res://scripts/simple_vision.gd" id="13_j4u4r"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4t7tu"]
@@ -557,13 +558,16 @@ initial_state = NodePath("Idle")
 [node name="Idle" type="Node" parent="StateMachine"]
 script = ExtResource("4_f8xe1")
 
-[node name="AttackableComponent" type="Node" parent="StateMachine/Idle"]
+[node name="Attackable" type="Node" parent="StateMachine/Idle"]
 script = ExtResource("4_qm3dx")
 hurt_state = NodePath("../../Hurt")
 dead_state = NodePath("../../Dead")
 
-[node name="ChaseOnSight" type="Node" parent="StateMachine/Idle"]
-script = ExtResource("5_2fsy1")
+[node name="ChaseOnSight" type="Node" parent="StateMachine/Idle" node_paths=PackedStringArray("vision")]
+script = ExtResource("5_wtq4b")
+vision = NodePath("../../../Vision")
+chase_state = NodePath("../../Chase")
+metadata/_custom_type_script = ExtResource("5_wtq4b")
 
 [node name="IdleTimer" type="Timer" parent="StateMachine/Idle"]
 one_shot = true
@@ -571,21 +575,32 @@ one_shot = true
 [node name="Wander" type="Node" parent="StateMachine"]
 script = ExtResource("5_q5r1w")
 
-[node name="AttackableComponent" type="Node" parent="StateMachine/Wander"]
+[node name="Attackable" type="Node" parent="StateMachine/Wander"]
 script = ExtResource("4_qm3dx")
 hurt_state = NodePath("../../Hurt")
 dead_state = NodePath("../../Dead")
+
+[node name="ChaseOnSight" type="Node" parent="StateMachine/Wander" node_paths=PackedStringArray("vision")]
+script = ExtResource("5_wtq4b")
+vision = NodePath("../../../Vision")
+chase_state = NodePath("../../Chase")
+metadata/_custom_type_script = ExtResource("5_wtq4b")
 
 [node name="WanderTimer" type="Timer" parent="StateMachine/Wander"]
 one_shot = true
 
-[node name="Chase" type="Node" parent="StateMachine"]
+[node name="Chase" type="Node" parent="StateMachine" node_paths=PackedStringArray("vision")]
 script = ExtResource("5_ed063")
+vision = NodePath("../../Vision")
+engage_state = NodePath("../Combat")
+disengage_state = NodePath("../Idle")
+metadata/_custom_type_script = ExtResource("12_j0cyh")
 
-[node name="AttackableComponent" type="Node" parent="StateMachine/Chase"]
+[node name="Attackable" type="Node" parent="StateMachine/Chase"]
 script = ExtResource("4_qm3dx")
 hurt_state = NodePath("../../Hurt")
 dead_state = NodePath("../../Dead")
+metadata/_custom_type_script = ExtResource("4_qm3dx")
 
 [node name="Combat" type="Node" parent="StateMachine"]
 script = ExtResource("6_yl0vr")
@@ -614,7 +629,6 @@ collision_layer = 0
 collision_mask = 11
 script = ExtResource("13_j4u4r")
 vision_collision_mask = 11
-detection_circle_visible = false
 
 [node name="Animation" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_5wpgu")
