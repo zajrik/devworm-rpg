@@ -224,7 +224,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack_back",
-"speed": 5.0
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -241,7 +241,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack_front",
-"speed": 5.0
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -258,7 +258,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack_side",
-"speed": 5.0
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -272,7 +272,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"death",
-"speed": 5.0
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -295,7 +295,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle_back",
-"speed": 5.0
+"speed": 9.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -318,7 +318,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle_front",
-"speed": 5.0
+"speed": 9.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -341,7 +341,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle_side",
-"speed": 5.0
+"speed": 9.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -364,7 +364,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"walk_back",
-"speed": 5.0
+"speed": 9.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -387,7 +387,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"walk_front",
-"speed": 5.0
+"speed": 9.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -410,7 +410,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"walk_side",
-"speed": 5.0
+"speed": 9.0
 }]
 
 [node name="Player" type="CharacterBody2D"]
@@ -419,8 +419,7 @@ collision_layer = 2
 collision_mask = 13
 motion_mode = 1
 script = ExtResource("1_fnqt3")
-speed = null
-health = null
+speed = 100
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_w7sni")

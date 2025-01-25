@@ -18,18 +18,21 @@ signal entered(previous_state: NodePath, data: Dictionary)
 signal exited()
 
 ## The components composing this state, if any.
-@onready var components: Array[Node] = find_children('*', 'StateComponent')
+@onready var components: Array[Node] = find_children('*', &'StateComponent')
 
 ## Called by the state machine when receiving unhandled input events.
-func handle_input(_event: InputEvent) -> void:
+@warning_ignore('unused_parameter')
+func handle_input(event: InputEvent) -> void:
     pass
 
 ## Called by the state machine during _process().
-func process(_delta: float) -> void:
+@warning_ignore('unused_parameter')
+func process(delta: float) -> void:
     pass
 
 ## Called by the state machine during _physics_process().
-func physics_process(_delta: float) -> void:
+@warning_ignore('unused_parameter')
+func physics_process(delta: float) -> void:
     pass
 
 ## Called by the state machine upon entering this state.
