@@ -8,7 +8,6 @@ class_name ChaseOnSightStateComponent extends StateComponent
         vision = value
         update_configuration_warnings()
 
-
 ## The chase State to transition to when an entity is sighted.
 @export_node_path(&'State') var chase_state: NodePath:
     set(value):

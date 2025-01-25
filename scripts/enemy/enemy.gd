@@ -74,16 +74,27 @@ func _process(_delta: float) -> void:
 ## Set the direction the enemy is facing based on velocity angle.
 ## Facing will not be updated if velocity length is zero.
 func face_velocity() -> void:
-    var angle: float = rad_to_deg(velocity.angle())
+    if velocity.length() == 0: return
+
+    facing = _angle_to_facing(velocity.angle())
+
+
+## Set the direction this enemy should be facing based on the given vector.
+func face_target(target: Vector2) -> void:
+    facing = _angle_to_facing(global_position.direction_to(target).angle())
+
+## Returns the Facing direction for the given angle (in radians).
+func _angle_to_facing(angle_radians: float) -> Enum.Facing:
+    var angle: float = rad_to_deg(angle_radians)
 
     if angle >= -135 and angle <= -45:
-        facing = Enum.Facing.BACK
+        return Enum.Facing.BACK
     elif angle >= -45 and angle <= 45:
-        facing = Enum.Facing.RIGHT
+        return Enum.Facing.RIGHT
     elif angle >= 45 and angle <= 135:
-        facing = Enum.Facing.FRONT
+        return Enum.Facing.FRONT
     else:
-        facing = Enum.Facing.LEFT
+        return Enum.Facing.LEFT
 
 
 ## Handle movement of this enemy (it's own or knockback)

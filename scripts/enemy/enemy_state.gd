@@ -6,6 +6,8 @@ class_name EnemyState extends State
 const IDLE: NodePath = ^'Idle'
 const WANDER: NodePath = ^'Wander'
 const CHASE: NodePath = ^'Chase'
+const RETURN: NodePath = ^'Return'
+const COMBAT: NodePath = ^'Combat'
 const ATTACK: NodePath = ^'Attack'
 const HURT: NodePath = ^'Hurt'
 const DEAD: NodePath = ^'Dead'
