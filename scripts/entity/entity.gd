@@ -3,6 +3,8 @@
 ## The base class for all entities that can be interacted with in the game.
 class_name Entity extends CharacterBody2D
 
+@onready var _components: ComponentContainer = $Components
+
 
 func _get_configuration_warnings() -> PackedStringArray:
     var result := []
@@ -24,3 +26,6 @@ func _get_configuration_warnings() -> PackedStringArray:
 func _notification(what: int) -> void:
     if what == NOTIFICATION_CHILD_ORDER_CHANGED:
         update_configuration_warnings()
+
+
+func get_component(name: StringName) -> Component:

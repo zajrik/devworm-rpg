@@ -82,8 +82,6 @@ func _chase_target() -> void:
     var target_position: Vector2 = target_entity.global_position
     var target_distance: float = enemy.global_position.distance_to(target_position)
 
-    #DebugDraw2D.set_text('target_distance', target_distance)
-
     if target_distance <= engage_proximity and vision.can_see(target_entity):
         enemy.set_velocity(Vector2.ZERO)
         transition.emit(engage_state, {'target': target_entity})

@@ -25,7 +25,6 @@ func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
     assert(data['target'] != null, 'Combat target data must be provided.')
 
     target = data['target']
-    #vision.entity_lost.connect(_on_entity_lost)
 
     _animate()
 
@@ -41,17 +40,9 @@ func enter(previous_state: NodePath, data: Dictionary = {}) -> void:
     transition.emit(ATTACK, {'target': target})
 
 
-#func exit() -> void:
-    #vision.entity_lost.disconnect(_on_entity_lost)
-
-
 func _animate() -> void:
     enemy.animation.flip_h = enemy.facing == Enum.Facing.LEFT
     match enemy.facing:
         Enum.Facing.FRONT: enemy.animation.play(&'idle_front')
         Enum.Facing.BACK: enemy.animation.play(&'idle_back')
         _: enemy.animation.play(&'idle_side')
-
-
-#func _on_entity_lost(entity: CharacterBody2D) -> void:
-    #transition.emit(RETURN)
